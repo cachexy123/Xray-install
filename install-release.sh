@@ -70,6 +70,9 @@ BETA='0'
 # --install-user ?
 INSTALL_USER=''
 
+# --token ?
+token=''
+
 # --without-geodata
 NO_GEODATA='0'
 
@@ -286,12 +289,20 @@ judgment_parameters() {
         PROXY="$2"
         shift
         ;;
-      '-u' | '--install-user')
+      '-t' | '--proxy')
+        if [[ -z "$2" ]]; then
+          echo "error: Please specify the proxy server address."
+          exit 1
+        fi
+        PROXY="$2"
+        shift
+        ;;
+      '-u' | '--token')
         if [[ -z "$2" ]]; then
           echo "error: Please specify the install user.}"
           exit 1
         fi
-        INSTALL_USER="$2"
+        token="$2"
         shift
         ;;
       '--reinstall')
@@ -369,7 +380,7 @@ get_latest_version() {
   # Get Xray latest release version number
   local tmp_file
   tmp_file="$(mktemp)"
-  if ! curl -x "${PROXY}" -sS -H "Accept: application/vnd.github.v3+json" -o "$tmp_file" 'https://api.github.com/repos/XTLS/Xray-core/releases/latest'; then
+  if ! curl -x "${PROXY}" -sS -H "Accept: application/vnd.github.v3+json" -H "Authorization: token ${token}" -o "$tmp_file" 'https://api.github.com/repos/XTLS/Xray-core/releases/latest'; then
     "rm" "$tmp_file"
     echo 'error: Failed to get release list, please check your network.'
     exit 1
@@ -387,7 +398,7 @@ get_latest_version() {
   fi
   "rm" "$tmp_file"
   RELEASE_LATEST="v${RELEASE_LATEST#v}"
-  if ! curl -x "${PROXY}" -sS -H "Accept: application/vnd.github.v3+json" -o "$tmp_file" 'https://api.github.com/repos/XTLS/Xray-core/releases'; then
+  if ! curl -x "${PROXY}" -sS -H "Accept: application/vnd.github.v3+json" -H "Authorization: token ${token}" -o "$tmp_file" 'https://api.github.com/repos/XTLS/Xray-core/releases'; then
     "rm" "$tmp_file"
     echo 'error: Failed to get release list, please check your network.'
     exit 1
