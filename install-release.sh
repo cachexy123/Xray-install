@@ -289,15 +289,7 @@ judgment_parameters() {
         PROXY="$2"
         shift
         ;;
-      '-t' | '--proxy')
-        if [[ -z "$2" ]]; then
-          echo "error: Please specify the proxy server address."
-          exit 1
-        fi
-        PROXY="$2"
-        shift
-        ;;
-      '-u' | '--token')
+      '-t' | '--token')
         if [[ -z "$2" ]]; then
           echo "error: Please specify the install user.}"
           exit 1
